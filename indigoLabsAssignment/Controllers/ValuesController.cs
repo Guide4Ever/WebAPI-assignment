@@ -182,7 +182,6 @@ namespace indigoLabsAssignment.Controllers
 			for (int i = 0; i < index; i++) {
 				words += "Regija: "+regions[i]+" Vsota: "+sums[i]+"\n";
 			}
-			words += index;
 			
 			return words;
 		}
