@@ -13,33 +13,15 @@ namespace indigoLabsAssignment.Controllers
 	[ApiController]
 	public class ValuesController : ControllerBase
 	{
-		public int countRows(string[] result) {
-			int rows = 0;
-			for (int i = 0; i < result.Length && result[i] != null; i++) {
-				rows++;
-			}
-			return rows;
-		}
 		public string[] GetCSV()
 		{
 			HttpWebRequest req = (HttpWebRequest)WebRequest.Create("https://raw.githubusercontent.com/sledilnik/data/master/csv/region-cases.csv");
 			HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
-
-			string[] result = new string[10000];
-			int index = 0;
-			using (StreamReader sr = new StreamReader(resp.GetResponseStream())) 
-			{
-				string s;			
-				do
-				{
-					s = sr.ReadLine();
-					result[index] = s;
-					index++;
-
-				} while (s != null);
-				sr.Close();
-				
-			}
+			
+			StreamReader sr = new StreamReader(resp.GetResponseStream());
+			string s = sr.ReadToEnd();
+			string[] result = s.Split('\n', '\r');
+			result = result.Take(result.Count() - 1).ToArray();
 
 			return result;
 		}
@@ -56,8 +38,7 @@ namespace indigoLabsAssignment.Controllers
 					break;
 				}
 			}
-			
-	
+
 			return appearanceIndex;
 		}
 
@@ -66,15 +47,14 @@ namespace indigoLabsAssignment.Controllers
 
 			//1. CSV datoteka
 			string[] result = GetCSV();
-			int numberOfRows = countRows(result);
 
 			//2. OBRAVNAVA Query parametrov (opcijski)
 			int yearFrom = int.Parse(result[1].Substring(0, 4));
 			int monthFrom = int.Parse(result[1].Substring(5, 2));
 			int dayFrom = int.Parse(result[1].Substring(8, 2));
-			int yearTo = int.Parse(result[numberOfRows - 1].Substring(0, 4));
-			int monthTo = int.Parse(result[numberOfRows - 1].Substring(5, 2));
-			int dayTo = int.Parse(result[numberOfRows - 1].Substring(8, 2));
+			int yearTo = int.Parse(result[result.Length - 1].Substring(0, 4));
+			int monthTo = int.Parse(result[result.Length - 1].Substring(5, 2));
+			int dayTo = int.Parse(result[result.Length - 1].Substring(8, 2));
 
 			int startIndex = 0; //izpise vse stolpce od zacetka
 
@@ -99,7 +79,7 @@ namespace indigoLabsAssignment.Controllers
 
 			string words = "";
 
-			for (int i = 1; i < numberOfRows; i++) {
+			for (int i = 1; i < result.Length-1; i++) {	 
 				int year = int.Parse(result[i].Substring(0, 4));
 				int month = int.Parse(result[i].Substring(5, 2));
 				int day = int.Parse(result[i].Substring(8, 2));
@@ -108,7 +88,6 @@ namespace indigoLabsAssignment.Controllers
 				//Znotraj časovnega okvirja
 				if (DateTime.Compare(dateThis, dateFrom) >= 0 && DateTime.Compare(dateThis, dateTo) <= 0) {
 
-					//words += result[i]+"\n";
 					string[] row = result[i].Split(',');
 
 					if (Region != null)
@@ -124,17 +103,15 @@ namespace indigoLabsAssignment.Controllers
 				}
 				
 			}
-			return words;
+			return words; 
 		}
 
 		[HttpGet("lastweek")]
 		public string postLastweek()
 		{
-
 			string[] result = GetCSV();
-			int numberOfRows = countRows(result);
 
-			//regije
+			//Iskanje stevilo regij	(lahko se kaksna dodatno pojavi)
 			string[] row = result[0].Split(','); //header
 			int index = 0;
 			for (int i = 0; i < row.Length; i++)
@@ -144,6 +121,7 @@ namespace indigoLabsAssignment.Controllers
 					index++;
 				}
 			}
+			//Iskanje imen regij in stolpcev, v katerih se pojavljajo active.cases
 			string[] regions = new string[index];  
 			int[] columnActive = new int[index];
 			index = 0;
@@ -155,11 +133,9 @@ namespace indigoLabsAssignment.Controllers
 					index++;
 				}
 			}
-			/*for (int i = 0; i < index; i++) {
-				Console.WriteLine("Regija: "+regions[i]+", Stolpec: "+columnActive[i]);
-			} */
+			//Sestevanje vsot po vrsticah
 			int[] sums = new int[index];
-			for (int i = numberOfRows-7; i < numberOfRows; i++) {
+			for (int i = result.Length-7; i < result.Length; i++) {
 				string[] tempRow = result[i].Split(',');
 				for (int j = 0; j < columnActive.Length; j++) { 
 					 sums[j] += int.Parse(tempRow[columnActive[j]]);
