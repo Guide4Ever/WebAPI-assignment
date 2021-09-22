@@ -13,7 +13,7 @@ It exposes the sum of number of active cases in the past 7 days for each availab
 
 * API Authentication (BasicAuth):
 
-Username: guide
+Username: guide <br/>
 Password: senk
 
 I enabled authentication upon first interaction with the site rather than the specific endpoint (be that \cases or \lastweek).
@@ -21,5 +21,8 @@ I enabled authentication upon first interaction with the site rather than the sp
 Postman's POV:
 ![Postman](Postman.png)
 
-Postman Auth's POV:
+Postman Auth's POV (200 OK):
 ![Postman2](Postman_auth.png)
+
+Postman Auth's POV (401 Unathorized):
+![Postman2](Postman_auth2.png)
