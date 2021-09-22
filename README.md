@@ -11,5 +11,15 @@ It supports **optional** query parameters such as Region, To and From. Upon the 
 
 It exposes the sum of number of active cases in the past 7 days for each available region, including foreign and unknown. The data set is available in the descending order, ordered by the latter sum. Resultset is written in: "Regija: %s, Vsota: %d" format.
 
+* API Authentication (BasicAuth):
+
+Username: guide
+Password: senk
+
+I enabled authentication upon first interaction with the site rather than the specific endpoint (be that \cases or \lastweek).
+
 Postman's POV:
 ![Postman](Postman.png)
+
+Postman Auth's POV:
+![Postman2](Postman_auth.png)
