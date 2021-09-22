@@ -6,9 +6,12 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace indigoLabsAssignment.Controllers
 {
+	[Authorize]
 	[Route("api/region")]
 	[ApiController]
 	public class ValuesController : ControllerBase
